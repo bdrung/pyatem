@@ -16,6 +16,28 @@
   <launchable type="desktop-id">nl.brixit.Switcher.desktop</launchable>
   <provides>
     <binary>switcher-control</binary>
+    <modalias>usb:v1EDBpBD28d*</modalias>
+    <modalias>usb:v1EDBpBD41d*</modalias>
+    <modalias>usb:v1EDBpBD6Ed*</modalias>
+    <modalias>usb:v1EDBpBD87d*</modalias>
+    <modalias>usb:v1EDBpBDAFd*</modalias>
+    <modalias>usb:v1EDBpBDB4d*</modalias>
+    <modalias>usb:v1EDBpBDC0d*</modalias>
+    <modalias>usb:v1EDBpBDC1d*</modalias>
+    <modalias>usb:v1EDBpBDC5d*</modalias>
+    <modalias>usb:v1EDBpBDD2d*</modalias>
+    <modalias>usb:v1EDBpBDD8d*</modalias>
+    <modalias>usb:v1EDBpBDF2d*</modalias>
+    <modalias>usb:v1EDBpBDF2d*</modalias>
+    <modalias>usb:v1EDBpBE0Cd*</modalias>
+    <modalias>usb:v1EDBpBE10d*</modalias>
+    <modalias>usb:v1EDBpBE49d*</modalias>
+    <modalias>usb:v1EDBpBE55d*</modalias>
+    <modalias>usb:v1EDBpBE56d*</modalias>
+    <modalias>usb:v1EDBpBE77d*</modalias>
+    <modalias>usb:v1EDBpBE89d*</modalias>
+    <modalias>usb:v1EDBpBE90d*</modalias>
+    <modalias>usb:v1EDBpBE91d*</modalias>
   </provides>
   <screenshots>
     <screenshot type="default">
