@@ -1,67 +1,67 @@
 # This goes into /etc/udev/rules.d/100-blackmagicdesign.rules
 
 # Atem Mini
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be49", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be49", TAG+="uaccess"
 
 # Atem Mini Pro
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be55", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be55", TAG+="uaccess"
 
 # Atem Mini Pro ISO
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be56", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be56", TAG+="uaccess"
 
 # Atem Production Studio 4K
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bd6e", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bd6e", TAG+="uaccess"
 
 # Atem 2 M/E Production Studio 4K
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bd87", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bd87", TAG+="uaccess"
 
 # Blackmagic design Mini Converter SDI to HDMI 6G
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdf2", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdf2", TAG+="uaccess"
 
 # Blackmagic design Micro Converter SDI to HDMI 12G
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be77", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be77", TAG+="uaccess"
 
 # Blackmagic design Micro Converter BiDirectional SDI/HDMI 12G
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be89", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be89", TAG+="uaccess"
 
 # Blackmagic design Micro Converter SDI to HDMI 3G
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be90", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be90", TAG+="uaccess"
 
 # Blackmagic design Micro Converter HDMI to SDI 3G
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be91", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be91", TAG+="uaccess"
 
 # Blackmagic design Micro Converter SDI to HDMI 6G
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdf2", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdf2", TAG+="uaccess"
 
 # Blackmagic design Micro Converter SDI to HDMI
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdc5", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdc5", TAG+="uaccess"
 
 # Blackmagic design Micro Converter BiDirectional SDI/HDMI
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be0c", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be0c", TAG+="uaccess"
 
 # Blackmagic design Mini Converter SDI to Audio
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bd28", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bd28", TAG+="uaccess"
 
 # Blackmagic design Mini Converter Up Down Cross
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bd41", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bd41", TAG+="uaccess"
 
 # Blackmagic design Teranex AV
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdd8", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdd8", TAG+="uaccess"
 
 # Blackmagic design Teranex Mini Converter HDMI to SDI 12G
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdaf", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdaf", TAG+="uaccess"
 
 # Blackmagic design Teranex Mini Converter Optical to HDMI 12G
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdb4", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdb4", TAG+="uaccess"
 
 # Blackmagic design Teranex Mini Converter 12G SDI to Quad SDI
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdc0", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdc0", TAG+="uaccess"
 
 # Blackmagic design Teranex Mini Converter Quad SDI to 12G SDI
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdc1", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdc1", TAG+="uaccess"
 
 # Blackmagic design Video Assist 4K
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be10", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="be10", TAG+="uaccess"
 
 # Blackmagic design MultiView 4
-SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdd2", MODE="0666"
+SUBSYSTEM=="usb", ATTR{idVendor}=="1edb", ATTR{idProduct}=="bdd2", TAG+="uaccess"
