@@ -82,11 +82,17 @@ class DownstreamKeyerPanel(PalettePanel):
         self.adj_right.set_value(data.right)
 
     def on_fill_change(self, widget):
-        source = int(widget.get_active_id())
+        active_id = widget.get_active_id()
+        if active_id is None:
+            return
+        source = int(active_id)
         self.run(DkeySetFillCommand(index=self.index, source=source))
 
     def on_key_change(self, widget):
-        source = int(widget.get_active_id())
+        active_id = widget.get_active_id()
+        if active_id is None:
+            return
+        source = int(active_id)
         self.run(DkeySetKeyCommand(index=self.index, source=source))
 
     def on_premultiplied(self, widget):

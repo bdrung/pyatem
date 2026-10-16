@@ -160,7 +160,7 @@ class VideoHub(Gtk.Grid):
         index = widget.get_active_id()
         if index == "":
             index = None
-        else:
+        elif index is not None:
             index = int(index)
 
         self.config["outputs"][str(output)]["source"] = index

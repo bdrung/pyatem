@@ -121,7 +121,10 @@ class SupersourcePanel(PalettePanel):
         self.run(SupersourceBoxPropertiesCommand(self.index, box, enabled=not state))
 
     def on_box_source(self, widget, box):
-        source = int(widget.get_active_id())
+        active_id = widget.get_active_id()
+        if active_id is None:
+            return
+        source = int(active_id)
         self.run(SupersourceBoxPropertiesCommand(self.index, box, source=source))
 
     def on_box_crop(self, widget, box):
@@ -133,7 +136,10 @@ class SupersourcePanel(PalettePanel):
         self.run(SupersourceBoxPropertiesCommand(self.index, box, **kwarg))
 
     def on_art_source(self, widget, prop):
-        kwarg = {prop: int(widget.get_active_id())}
+        active_id = widget.get_active_id()
+        if active_id is None:
+            return
+        kwarg = {prop: int(active_id)}
         self.run(SupersourcePropertiesCommand(self.index, **kwarg))
 
     def on_premultiplied(self, widget):

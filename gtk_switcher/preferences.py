@@ -373,7 +373,10 @@ class PreferencesWindow:
     def on_multiview_window_changed(self, widget):
         if self.model_changing:
             return
-        cmd = MultiviewInputCommand(index=0, window=widget.window, source=int(widget.get_active_id()))
+        active_id = widget.get_active_id()
+        if active_id is None:
+            return
+        cmd = MultiviewInputCommand(index=0, window=widget.window, source=int(active_id))
         self.connection.mixer.send_commands([cmd])
 
     def apply_css(self, widget, provider):
@@ -395,7 +398,10 @@ class PreferencesWindow:
                 self.connection.mixer.send_commands([cmd])
                 return
 
-        cmds.append(VideoModeCommand(int(self.video_mode.get_active_id())))
+        active_id = widget.get_active_id()
+        if active_id is None:
+            return
+        cmds.append(VideoModeCommand(int(active_id)))
         self.connection.mixer.send_commands(cmds)
 
     def on_add_videohub_clicked(self, widget, *args):

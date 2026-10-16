@@ -35,7 +35,7 @@ class MediaPlayerPanel(PalettePanel):
 
     def on_mediaplayer_change(self, widget):
         index = widget.get_active_id()
-        if index == "":
+        if index is None or index == "":
             return
 
         index = int(index)

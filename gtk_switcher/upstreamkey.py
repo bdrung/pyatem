@@ -213,7 +213,10 @@ class UpstreamKeyer(Gtk.Frame):
     def on_fill_changed(self, widget, *args):
         if self.model_changing:
             return
-        source = int(widget.get_active_id())
+        active_id = widget.get_active_id()
+        if active_id is None:
+            return
+        source = int(active_id)
         cmd = KeyFillCommand(index=self.index, keyer=self.keyer, source=source)
         self.connection.mixer.send_commands([cmd])
 
@@ -221,7 +224,10 @@ class UpstreamKeyer(Gtk.Frame):
     def on_key_changed(self, widget, *args):
         if self.model_changing:
             return
-        source = int(widget.get_active_id())
+        active_id = widget.get_active_id()
+        if active_id is None:
+            return
+        source = int(active_id)
         cmd = KeyCutCommand(index=self.index, keyer=self.keyer, source=source)
         self.connection.mixer.send_commands([cmd])
 

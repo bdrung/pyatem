@@ -331,14 +331,20 @@ class SwitcherPage:
     def on_dip_source_changed(self, widget):
         if hasattr(widget, 'ignore_change') and widget.ignore_change or self.model_changing:
             return
-        cmd = DipSettingsCommand(index=0, source=int(self.dip_source.get_active_id()))
+        active_id = widget.get_active_id()
+        if active_id is None:
+            return
+        cmd = DipSettingsCommand(index=0, source=int(active_id))
         self.connection.mixer.send_commands([cmd])
 
     def on_aux_source_changed(self, widget):
         if hasattr(widget, 'ignore_change') and widget.ignore_change or self.model_changing:
             return
 
-        self.routing.change(widget.index, int(widget.get_active_id()))
+        active_id = widget.get_active_id()
+        if active_id is None:
+            return
+        self.routing.change(widget.index, int(active_id))
 
     def on_wipe_symmetry_adj_value_changed(self, widget, *args):
         if self.model_changing:
@@ -1310,14 +1316,20 @@ class SwitcherPage:
     def on_stream_recorder_disk1_changed(self, widget, *args):
         if self.model_changing:
             return
-        disk_id = int(widget.get_active_id())
+        active_id = widget.get_active_id()
+        if active_id is None:
+            return
+        disk_id = int(active_id)
         cmd = RecordingSettingsSetCommand(disk1=disk_id)
         self.connection.mixer.send_commands([cmd])
 
     def on_stream_recorder_disk2_changed(self, widget, *args):
         if self.model_changing:
             return
-        disk_id = int(widget.get_active_id())
+        active_id = widget.get_active_id()
+        if active_id is None:
+            return
+        disk_id = int(active_id)
         cmd = RecordingSettingsSetCommand(disk2=disk_id)
         self.connection.mixer.send_commands([cmd])
 
