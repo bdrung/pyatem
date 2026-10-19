@@ -179,7 +179,7 @@ class UdpProtocol(BaseProtocol):
         self.local_sequence_number = 0
         self.local_ack_number = 0
         self.remote_sequence_number = 0
-        self.remote_ack_numbe = 0
+        self.remote_ack_number = 0
 
         self.state = UdpProtocol.STATE_CLOSED
         self.session_id = 0x1337
@@ -341,7 +341,7 @@ class UdpProtocol(BaseProtocol):
         self.local_sequence_number = -1
         self.local_ack_number = 0
         self.remote_sequence_number = 0
-        self.remote_ack_numbe = 0
+        self.remote_ack_number = 0
         self.session_id = 0x1337
         self.enable_ack = False
 
