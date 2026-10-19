@@ -227,6 +227,8 @@ class UdpProtocol(BaseProtocol):
                     RuntimeError("Unexpected result from select()")
 
     def get_link_quality(self):
+        if self.packet_sucess == 0:
+            return 100
         return 100 - (self.packet_errors / self.packet_sucess * 100)
 
     def _send_packet(self, packet):
