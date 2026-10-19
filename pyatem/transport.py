@@ -391,7 +391,7 @@ class UdpProtocol(BaseProtocol):
                 if packet.length == 12:
                     # This is a control packet, deal with it in the transport layer
                     if not self.enable_ack:
-                        # This is the first ACK from the mixer, after this we should send ACKs bac
+                        # This is the first ACK from the mixer, after this we should send ACKs back
                         self.enable_ack = True
                         # self.local_sequence_number = 0
                         ack = Packet()
