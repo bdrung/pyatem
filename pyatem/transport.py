@@ -249,7 +249,7 @@ class UdpProtocol(BaseProtocol):
             pass
         if packet.flags & (UdpProtocol.FLAG_SYN | UdpProtocol.FLAG_ACK) == 0:
             self.local_sequence_number = (self.local_sequence_number + 1) % 2 ** 16
-        self.retransmission_buffer[self.local_sequence_number] = packet
+            self.retransmission_buffer[self.local_sequence_number] = packet
 
         if packet.label == "_handshake":
             # Clear temporary session id, use the session id received in the first packet from the remote
