@@ -307,7 +307,7 @@ class UdpProtocol(BaseProtocol):
             packet.sequence_number = (self.local_sequence_number + 1) % 2 ** 16
         raw = packet.to_bytes()
         self.sock.sendto(raw, (self.ip, self.port))
-        self.log.debug('> {}'.format(packet))
+        self.log.debug("> %s", packet)
         if packet.debug:
             # hexdump(raw)
             pass
@@ -356,7 +356,7 @@ class UdpProtocol(BaseProtocol):
                 self.log.error("retransmission detected")
                 self.packet_errors += 1
                 if self.get_link_quality() < 80:
-                    self.log.error(f"Connection quality bad ({self.get_link_quality():.1f}%)")
+                    self.log.error("Connection quality bad (%.1f%%)", self.get_link_quality())
             else:
                 self.log.warning("retransmission of PING detected, non-fatal")
         else:
@@ -401,7 +401,7 @@ class UdpProtocol(BaseProtocol):
 
         response_code = packet.data[0]
 
-        self.log.debug('Got response 0x{:02X} to handshake'.format(response_code))
+        self.log.debug('Got response 0x%02X to handshake', response_code)
 
         if response_code == 0x02:
             self.state = UdpProtocol.STATE_ESTABLISHED
@@ -552,7 +552,7 @@ class UsbProtocol(BaseProtocol):
                 timer = time.time_ns()
             except usb.USBError as e:
                 if e.errno == 32:
-                    self.log.fatal(f"USB failure on reading new packet: {e}")
+                    self.log.fatal("USB failure on reading new packet: %s", e)
 
                 if e.errno == 110:
                     # Timeout happened, start reading again
@@ -571,7 +571,7 @@ class UsbProtocol(BaseProtocol):
                             self.handle.detach_kernel_driver(i)
                             self.log.debug('kernel driver detached')
                         except usb.core.USBError as e:
-                            self.log.error('Could not detach kernel driver: ' + str(e))
+                            self.log.error('Could not detach kernel driver: %s', str(e))
         except usb.core.USBError as e:
             if e.errno == 13:
                 raise PermissionError(e)
@@ -643,8 +643,8 @@ class UsbProtocol(BaseProtocol):
                 self.state = UsbProtocol.STATE_CONNECTED
                 if self.rev == 8.6:
                     header = struct.unpack_from('BBBB', packet, 0)
-                    self.log.debug(f'RX packet 0x{header[0]:x}')
-                    self.log.debug(f'Send handshake packet 0x03')
+                    self.log.debug('RX packet 0x%x', header[0])
+                    self.log.debug('Send handshake packet 0x03')
                     self.write(0x03, b'x00\x00\x00\x00\x00\x00\x10\x00\x00\x00')
                     continue
 
@@ -653,7 +653,7 @@ class UsbProtocol(BaseProtocol):
                 packet_type = header[0]
                 if packet_type == 0x03:
                     payload = struct.unpack('>BBBBH6x', packet)
-                    self.log.warning(f"RX Buffer change received: {payload[0]}")
+                    self.log.warning("RX Buffer change received: %s", payload[0])
                 elif packet_type == 0x04:
                     # Packet is ATEM protocol data.
                     payload_length, = struct.unpack_from('<H', packet, 4)
@@ -670,7 +670,7 @@ class UsbProtocol(BaseProtocol):
                         self.init_done = True
                         self.log.debug("Mark connection ready after this")
                 else:
-                    self.log.warning(f"Unknown packet type received: {packet_type:#X}")
+                    self.log.warning("Unknown packet type received: %#X", packet_type)
                     continue
 
             raw = bytes(packet)
