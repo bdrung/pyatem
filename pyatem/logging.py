@@ -11,7 +11,8 @@ class AtemLogFormatter(logging.Formatter):
     red = "\x1b[31;20m"
     bold_red = "\x1b[31;1m"
     reset = "\x1b[0m"
-    format = '[%(levelname)-8s %(threadName)-12s] %(name)-14s - %(message)s'
+    date_format = '%Y-%m-%d %H:%M:%S'
+    format = '[%(asctime)s %(levelname)-8s %(threadName)-12s] %(name)-14s - %(message)s'
 
     FORMATS = {
         logging.DEBUG: blue + format + reset,
