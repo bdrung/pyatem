@@ -12,14 +12,14 @@ class AtemLogFormatter(logging.Formatter):
     bold_red = "\x1b[31;1m"
     reset = "\x1b[0m"
     date_format = '%Y-%m-%d %H:%M:%S'
-    format = '[%(asctime)s %(levelname)-8s %(threadName)-12s] %(name)-14s - %(message)s'
+    format_str = '[%(asctime)s %(levelname)-8s %(threadName)-12s] %(name)-14s - %(message)s'
 
     FORMATS = {
-        logging.DEBUG: blue + format + reset,
-        logging.INFO: white + format + reset,
-        logging.WARNING: yellow + format + reset,
-        logging.ERROR: red + format + reset,
-        logging.CRITICAL: bold_red + format + reset
+        logging.DEBUG: blue + format_str + reset,
+        logging.INFO: white + format_str + reset,
+        logging.WARNING: yellow + format_str + reset,
+        logging.ERROR: red + format_str + reset,
+        logging.CRITICAL: bold_red + format_str + reset
     }
 
     def format(self, record):
