@@ -4,7 +4,7 @@ import struct
 
 from pyatem.field import ManualField
 from pyatem.protocol import AtemProtocol
-from pyatem.transport import Packet, UdpProtocol
+from pyatem.transport import Packet, Sequence, UdpProtocol
 
 
 class AtemClient:
@@ -47,12 +47,12 @@ class AtemClient:
             self.local_ack_number = ack
 
         if not packet.flags & UdpProtocol.FLAG_SYN:
-            packet.sequence_number = (self.local_sequence_number + 1) % 2 ** 16
+            packet.sequence_number = (self.local_sequence_number + 1) % Sequence.MODULUS
         raw = packet.to_bytes()
         self.sock.sendto(raw, self.addr)
 
         if packet.flags & (UdpProtocol.FLAG_SYN) == 0:
-            self.local_sequence_number = (self.local_sequence_number + 1) % 2 ** 16
+            self.local_sequence_number = (self.local_sequence_number + 1) % Sequence.MODULUS
 
     def decode_packet(self, data):
         offset = 0

@@ -304,7 +304,7 @@ class UdpProtocol(BaseProtocol):
         if not packet.flags & UdpProtocol.FLAG_ACK:
             if self.local_sequence_number == -1:
                 self.local_sequence_number = 0
-            packet.sequence_number = (self.local_sequence_number + 1) % 2 ** 16
+            packet.sequence_number = (self.local_sequence_number + 1) % Sequence.MODULUS
         raw = packet.to_bytes()
         self.sock.sendto(raw, (self.ip, self.port))
         self.log.debug("> %s", packet)
@@ -312,7 +312,7 @@ class UdpProtocol(BaseProtocol):
             # hexdump(raw)
             pass
         if packet.flags & (UdpProtocol.FLAG_SYN | UdpProtocol.FLAG_ACK) == 0:
-            self.local_sequence_number = (self.local_sequence_number + 1) % 2 ** 16
+            self.local_sequence_number = (self.local_sequence_number + 1) % Sequence.MODULUS
             self.retransmission_buffer[self.local_sequence_number] = packet
 
         if packet.label == "_handshake":
