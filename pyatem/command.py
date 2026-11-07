@@ -6,10 +6,10 @@ import struct
 
 
 class Command:
-    def get_command(self):
-        pass
+    def get_command(self) -> bytes:
+        return b""
 
-    def _make_command(self, name, data):
+    def _make_command(self, name: str, data: bytes) -> bytes:
         header = struct.pack('>H 2x 4s', len(data) + 8, name.encode())
         return header + data
 
@@ -29,13 +29,13 @@ class CutCommand(Command):
 
     """
 
-    def __init__(self, index):
+    def __init__(self, index: int) -> None:
         """
         :param index: 0-indexed M/E number for the transition
         """
         self.index = index
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>B 3x', self.index)
         return self._make_command('DCut', data)
 
@@ -55,13 +55,13 @@ class AutoCommand(Command):
 
     """
 
-    def __init__(self, index):
+    def __init__(self, index: int) -> None:
         """
         :param index: 0-indexed M/E number for the transition
         """
         self.index = index
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>B 3x', self.index)
         return self._make_command('DAut', data)
 
@@ -82,7 +82,7 @@ class ProgramInputCommand(Command):
 
     """
 
-    def __init__(self, index, source):
+    def __init__(self, index: int, source: int) -> None:
         """
         :param index: 0-indexed M/E number for the program bus
         :param source: Source index to send to the program bus
@@ -90,7 +90,7 @@ class ProgramInputCommand(Command):
         self.index = index
         self.source = source
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>B x H', self.index, self.source)
         return self._make_command('CPgI', data)
 
@@ -111,7 +111,7 @@ class PreviewInputCommand(Command):
 
     """
 
-    def __init__(self, index, source):
+    def __init__(self, index: int, source: int) -> None:
         """
         :param index: 0-indexed M/E number for the preview bus
         :param source: Source index to send to the preview bus
@@ -119,7 +119,7 @@ class PreviewInputCommand(Command):
         self.index = index
         self.source = source
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>B x H', self.index, self.source)
         return self._make_command('CPvI', data)
 
@@ -139,7 +139,7 @@ class AuxSourceCommand(Command):
 
     """
 
-    def __init__(self, index, source):
+    def __init__(self, index: int, source: int) -> None:
         """
         :param index: 0-indexed AUX output number
         :param source: Source index to send to the aux output
@@ -147,7 +147,7 @@ class AuxSourceCommand(Command):
         self.index = index
         self.source = source
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>BBH', 1, self.index, self.source)
         return self._make_command('CAuS', data)
 
@@ -167,7 +167,7 @@ class TransitionPositionCommand(Command):
 
     """
 
-    def __init__(self, index, position):
+    def __init__(self, index: int, position: int) -> None:
         """
         :param index: 0-indexed M/E number for the T-bar
         :param position: Position for the T-bar [0-10000]
@@ -175,7 +175,7 @@ class TransitionPositionCommand(Command):
         self.index = index
         self.position = position
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         position = self.position
         data = struct.pack('>BxH', self.index, position)
         return self._make_command('CTPs', data)
@@ -232,7 +232,7 @@ class TransitionSettingsCommand(Command):
         self.style = style
         self.next_transition = next_transition
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.style is not None:
             mask |= 0x01
@@ -269,7 +269,7 @@ class TransitionPreviewCommand(Command):
         self.index = index
         self.enabled = enabled
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>B ? 2x', self.index, self.enabled)
         return self._make_command('CTPr', data)
 
@@ -309,7 +309,7 @@ class ColorGeneratorCommand(Command):
         h, l, s = colorsys.rgb_to_hls(red, green, blue)
         return cls(index, hue=h * 359, saturation=s, luma=l)
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.hue is not None:
             mask |= 0x01
@@ -342,13 +342,13 @@ class FadeToBlackCommand(Command):
 
     """
 
-    def __init__(self, index):
+    def __init__(self, index: int) -> None:
         """
         :param index: 0-indexed M/E number for the transition
         """
         self.index = index
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>B 3x', self.index)
         return self._make_command('FtbA', data)
 
@@ -378,7 +378,7 @@ class FadeToBlackConfigCommand(Command):
         self.index = index
         self.frames = frames
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>BBBx', 1, self.index, self.frames)
         return self._make_command('FtbC', data)
 
@@ -397,7 +397,7 @@ class CaptureStillCommand(Command):
 
     """
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         return self._make_command('Capt', b'')
 
 
@@ -438,7 +438,7 @@ class MediaplayerSelectCommand(Command):
         else:
             self.source_type = 2
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 1
         if self.still is not None:
             mask |= 1 << 1
@@ -476,7 +476,7 @@ class DkeyOnairCommand(Command):
         self.index = index
         self.on_air = on_air
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>B?xx', self.index, self.on_air)
         return self._make_command('CDsL', data)
 
@@ -505,7 +505,7 @@ class DkeyTieCommand(Command):
         self.index = index
         self.tie = tie
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>B?xx', self.index, self.tie)
         return self._make_command('CDsT', data)
 
@@ -525,13 +525,13 @@ class DkeyAutoCommand(Command):
 
     """
 
-    def __init__(self, index):
+    def __init__(self, index: int) -> None:
         """
         :param index: 0-indexed DSK number to control
         """
         self.index = index
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>Bxxx', self.index)
         return self._make_command('DDsA', data)
 
@@ -560,7 +560,7 @@ class DkeyRateCommand(Command):
         self.index = index
         self.rate = rate
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>BBxx', self.index, self.rate)
         return self._make_command('CDsR', data)
 
@@ -581,7 +581,7 @@ class DkeySetFillCommand(Command):
 
     """
 
-    def __init__(self, index, source):
+    def __init__(self, index: int, source: int) -> None:
         """
         :param index: 0-indexed DSK number to control
         :param source: The fill source index for the downstream keyer
@@ -589,7 +589,7 @@ class DkeySetFillCommand(Command):
         self.index = index
         self.source = source
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>BxH', self.index, self.source)
         return self._make_command('CDsF', data)
 
@@ -610,7 +610,7 @@ class DkeySetKeyCommand(Command):
 
     """
 
-    def __init__(self, index, source):
+    def __init__(self, index: int, source: int) -> None:
         """
         :param index: 0-indexed DSK number to control
         :param source: The key source index for downstream keyer
@@ -618,7 +618,7 @@ class DkeySetKeyCommand(Command):
         self.index = index
         self.source = source
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>BxH', self.index, self.source)
         return self._make_command('CDsC', data)
 
@@ -668,7 +668,7 @@ class DkeyGainCommand(Command):
         self.gain = gain
         self.invert = invert
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.premultiplied is not None:
             mask |= 0x01
@@ -734,7 +734,7 @@ class DkeyMaskCommand(Command):
         self.left = left
         self.right = right
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.enabled is not None:
             mask |= 0x01
@@ -780,7 +780,7 @@ class MixSettingsCommand(Command):
         self.index = index
         self.rate = rate
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>BBxx', self.index, self.rate)
         return self._make_command('CTMx', data)
 
@@ -815,7 +815,7 @@ class DipSettingsCommand(Command):
         self.rate = rate
         self.source = source
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.rate is not None:
             mask |= 0x01
@@ -896,7 +896,7 @@ class WipeSettingsCommand(Command):
         self.reverse = reverse
         self.flipflop = flipflop
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.rate is not None:
             mask |= 1 << 0
@@ -1008,7 +1008,7 @@ class DveSettingsCommand(Command):
         self.reverse = reverse
         self.flipflop = flipflop
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.rate is not None:
             mask |= 1 << 0
@@ -1083,7 +1083,7 @@ class AudioMasterPropertiesCommand(Command):
         self.volume = volume
         self.afv = afv
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.volume is not None:
             mask |= 1 << 0
@@ -1148,7 +1148,7 @@ class AudioMonitorPropertiesCommand(Command):
         self.dim = dim
         self.dim_volume = dim_volume
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.enabled is not None:
             mask |= 1 << 0
@@ -1226,7 +1226,7 @@ class AudioInputCommand(Command):
         self.on = on
         self.afv = afv
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.on is not None or self.afv is not None:
             mask |= 1 << 0
@@ -1296,7 +1296,7 @@ class FairlightMasterPropertiesCommand(Command):
         self.afv = afv
         self.eq_enable = eq_enable
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.eq_enable is not None:
             mask |= 1 << 0
@@ -1390,7 +1390,7 @@ class FairlightStripPropertiesCommand(Command):
         self.volume = volume
         self.state = state
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.delay is not None:
             mask |= 1 << 0
@@ -1490,7 +1490,7 @@ class FairlightEqBandPropertiesCommand(Command):
         self.gain = gain
         self.q = q
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.enabled is not None:
             mask |= 1 << 0
@@ -1548,7 +1548,7 @@ class KeyOnAirCommand(Command):
         self.keyer = keyer
         self.enabled = enabled
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>BB?x', self.index, self.keyer, self.enabled)
         return self._make_command('CKOn', data)
 
@@ -1580,7 +1580,7 @@ class KeyFillCommand(Command):
         self.keyer = keyer
         self.source = source
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>BBH', self.index, self.keyer, self.source)
         return self._make_command('CKeF', data)
 
@@ -1610,7 +1610,7 @@ class KeyCutCommand(Command):
         self.keyer = keyer
         self.source = source
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>BBH', self.index, self.keyer, self.source)
         return self._make_command('CKeC', data)
 
@@ -1665,7 +1665,7 @@ class KeyTypeCommand(Command):
         self.type = type
         self.fly_enabled = fly_enabled
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.type is not None:
             mask |= 1 << 0
@@ -1828,7 +1828,7 @@ class KeyPropertiesDveCommand(Command):
         self.border_saturation = int(s * 1000)
         self.border_luma = int(l * 1000)
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.size_x is not None:
             mask |= 1 << 0
@@ -2012,7 +2012,7 @@ class KeyPropertiesAdvancedChromaColorpickerCommand(Command):
         self.Cb = Cb
         self.Cr = Cr
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.cursor is not None:
             mask |= 1 << 0
@@ -2124,7 +2124,7 @@ class KeyPropertiesAdvancedChromaCommand(Command):
         self.green = green
         self.blue = blue
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.foreground is not None:
             mask |= 1 << 0
@@ -2215,7 +2215,7 @@ class KeyPropertiesLumaCommand(Command):
         self.gain = gain
         self.invert_key = invert_key
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.premultiplied is not None:
             mask |= 1 << 0
@@ -2263,7 +2263,7 @@ class KeyerKeyframeSetCommand(Command):
         self.keyer = keyer
         self.keyframe = keyframe
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         keyframe = 1 if self.keyframe == 'A' else 2
         data = struct.pack('>BBBx', self.index, self.keyer, keyframe)
         return self._make_command('SFKF', data)
@@ -2302,7 +2302,7 @@ class KeyerKeyframeRunCommand(Command):
         self.run_to = run_to
         self.set_infinite = set_infinite
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         run_to_lut = {
             'A': 1,
             'B': 2,
@@ -2341,7 +2341,7 @@ class RecorderStatusCommand(Command):
         """
         self.recording = recording
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>?3x', self.recording)
         return self._make_command('RcTM', data)
 
@@ -2376,7 +2376,7 @@ class RecordingSettingsSetCommand(Command):
         self.disk2 = disk2
         self.record_in_camera = record_in_camera
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.filename is not None:
             mask |= 1 << 0
@@ -2437,7 +2437,7 @@ class StreamingServiceSetCommand(Command):
         self.bitrate_min = bitrate_min
         self.bitrate_max = bitrate_max
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         if self.bitrate_min is None and self.bitrate_max is not None:
             return ValueError("Both min and max bitrate required")
         if self.bitrate_max is None and self.bitrate_min is not None:
@@ -2483,7 +2483,7 @@ class StreamingAudioBitrateCommand(Command):
         self.bitrate_min = bitrate_min
         self.bitrate_max = bitrate_max
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>II', self.bitrate_min, self.bitrate_max)
         return self._make_command('STAB', data)
 
@@ -2518,7 +2518,7 @@ class UsbAudioFunctionCommand(Command):
         self.function = function
         self.u1 = u1
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>HH', self.function, self.u1)
         return self._make_command('UAFn', data)
 
@@ -2544,7 +2544,7 @@ class StreamingStatusSetCommand(Command):
         """
         self.streaming = streaming
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>?xxx', self.streaming)
         return self._make_command('StrR', data)
 
@@ -2577,7 +2577,7 @@ class MultiviewPropertiesCommand(Command):
         self.layout = layout
         self.swap = swap
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.layout is not None:
             mask |= 1 << 0
@@ -2614,7 +2614,7 @@ class MultiviewInputCommand(Command):
         self.window = window
         self.source = source
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>BBH', self.index, self.window, self.source)
         return self._make_command('CMvI', data)
 
@@ -2642,7 +2642,7 @@ class LockCommand(Command):
         self.store = store
         self.state = state
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>H?x', self.store, self.state)
         return self._make_command('LOCK', data)
 
@@ -2670,7 +2670,7 @@ class PartialLockCommand(Command):
         self.store = store
         self.slot = slot
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>HH BBxx', self.store, self.slot, 0xff, 0x01)
         return self._make_command('PLCK', data)
 
@@ -2701,7 +2701,7 @@ class TransferDownloadRequestCommand(Command):
         self.store = store
         self.slot = slot
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         # Special case for macro downloads, not sure why
         if self.store == 0xffff:
             u1 = 0x03
@@ -2761,7 +2761,7 @@ class TransferUploadRequestCommand(Command):
         self.length = length
         self.mode = mode
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>HHxxHIHxx', self.transfer, self.store, self.slot, self.length, self.mode)
         return self._make_command('FTSD', data)
 
@@ -2789,7 +2789,7 @@ class TransferDataCommand(Command):
         self.transfer = transfer
         self.data = data
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>HH', self.transfer, len(self.data))
         return self._make_command('FTDa', data + self.data)
 
@@ -2825,7 +2825,7 @@ class TransferFileDataCommand(Command):
         self.description = description
         self.hash = hash
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         name = self.name.encode() if self.name is not None else b''
         description = self.description.encode() if self.description is not None else b''
 
@@ -2855,7 +2855,7 @@ class TransferAckCommand(Command):
         self.transfer = transfer
         self.slot = slot
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>HH', self.transfer, self.slot)
         return self._make_command('FTUA', data)
 
@@ -2880,7 +2880,7 @@ class SendAudioLevelsCommand(Command):
         """
         self.enable = enable
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>? 3x', self.enable)
         return self._make_command('SALN', data)
 
@@ -2905,7 +2905,7 @@ class SendFairlightLevelsCommand(Command):
         """
         self.enable = enable
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>? 3x', self.enable)
         return self._make_command('SFLN', data)
 
@@ -2946,7 +2946,7 @@ class CameraControlCommand(Command):
         self.datatype = datatype if datatype is not None else 0
         self.data = data
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         count = 0
         if self.data is not None:
             count = len(self.data)
@@ -3010,7 +3010,7 @@ class VideoModeCommand(Command):
         """
         self.mode = mode
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>B3x', self.mode)
         return self._make_command('CVdM', data)
 
@@ -3035,7 +3035,7 @@ class AutoInputVideoModeCommand(Command):
         """
         self.enable = enable
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>?3x', self.enable)
         return self._make_command('AiVM', data)
 
@@ -3070,7 +3070,7 @@ class InputPropertiesCommand(Command):
         self.short_label = short_label
         self.port_type = port_type
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.label is not None:
             mask |= 1 << 0
@@ -3093,7 +3093,7 @@ class TimeRequestCommand(Command):
     This command has no arguments.
     """
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         return self._make_command('TiRq', b'')
 
 
@@ -3108,7 +3108,7 @@ class SetTimeOfDayCommand(Command):
             raise ValueError()
         self.time = time
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         timestamp = self.time.timestamp()
         data = struct.pack('>I4x', timestamp)
         return self._make_command('SToD', data)
@@ -3141,7 +3141,7 @@ class TransferCompleteCommand(Command):
         self.slot = slot
         self.upload = upload
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>HH ?xxx', self.store, self.slot, self.upload)
         return self._make_command('*XFC', data)
 
@@ -3200,7 +3200,7 @@ class SupersourcePropertiesCommand(Command):
         self.gain = gain
         self.invert = invert
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.fill is not None:
             mask |= 1 << 0
@@ -3302,7 +3302,7 @@ class SupersourceBoxPropertiesCommand(Command):
         self.left = left
         self.right = right
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         mask = 0
         if self.enabled is not None:
             mask |= 1 << 0
@@ -3368,7 +3368,7 @@ class MacroRecordCommand(Command):
         self.name = name
         self.description = description
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>HHH', self.index, len(self.name), len(self.description))
         data += self.name.encode('ascii')
         data += self.description.encode('ascii')
@@ -3409,7 +3409,7 @@ class MacroActionCommand(Command):
         self.index = index if index is not None else 0xFFFF
         self.action = action
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>HBx', self.index, self.action)
         return self._make_command('MAct', data)
 
@@ -3427,10 +3427,10 @@ class SaveStartupStateCommand(Command):
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>xxxx')
         return self._make_command('SRsv', data)
 
@@ -3448,9 +3448,9 @@ class ClearStartupStateCommand(Command):
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def get_command(self):
+    def get_command(self) -> bytes:
         data = struct.pack('>xxxx')
         return self._make_command('SRcl', data)
