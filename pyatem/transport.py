@@ -5,10 +5,12 @@ import socket
 import struct
 import logging
 import time
+import typing
 from queue import Queue, Empty
 import collections
 from urllib.parse import urlparse
 import threading
+from types import NotImplementedType
 
 import usb.core
 import usb.util
@@ -119,6 +121,68 @@ class Packet:
         return flags
 
 
+class Sequence:
+    """16-bit serial number arithmetic with automatic wraparound (RFC 1982)."""
+
+    MODULUS = 2**16
+    HALF = MODULUS // 2
+    __slots__ = ("value",)
+
+    def __init__(self, value: int = 0):
+        self.value = value % self.MODULUS
+
+    def _coerce(self, other: typing.Any) -> int | NotImplementedType:
+        if isinstance(other, Sequence):
+            return other.value
+        if isinstance(other, int):
+            return other % self.MODULUS
+        return NotImplemented
+
+    def __eq__(self, other: typing.Any) -> bool:
+        return self.value == self._coerce(other)
+
+    def __ge__(self, other: typing.Any) -> bool | NotImplementedType:
+        other_value = self._coerce(other)
+        if other_value is NotImplemented:
+            return NotImplemented
+        diff = (self.value - other_value) % self.MODULUS
+        return diff < self.HALF
+
+    def __gt__(self, other: typing.Any) -> bool | NotImplementedType:
+        other_value = self._coerce(other)
+        if other_value is NotImplemented:
+            return NotImplemented
+        diff = (self.value - other_value) % self.MODULUS
+        return 0 < diff < self.HALF
+
+    def __le__(self, other: typing.Any) -> bool | NotImplementedType:
+        other_value = self._coerce(other)
+        if other_value is NotImplemented:
+            return NotImplemented
+        diff = (other_value - self.value) % self.MODULUS
+        return diff < self.HALF
+
+    def __lt__(self, other: typing.Any) -> bool | NotImplementedType:
+        other_value = self._coerce(other)
+        if other_value is NotImplemented:
+            return NotImplemented
+        diff = (other_value - self.value) % self.MODULUS
+        return 0 < diff < self.HALF
+
+    def __index__(self) -> int:
+        return self.value
+
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+    def __repr__(self) -> str:
+        return f"Sequence({self.value})"
+
+    def next(self) -> "Sequence":
+        """Returns the next sequence number (self + 1)."""
+        return Sequence(self.value + 1)
+
+
 class BaseProtocol:
     def __init__(self):
         self.send_queue = collections.deque(maxlen=1024)
@@ -177,7 +241,7 @@ class UdpProtocol(BaseProtocol):
         self.thread = threading.Thread(None, self._udp_thread, "atem-udp", daemon=True)
 
         self.local_sequence_number = 0
-        self.local_ack_number = 0
+        self.local_ack_number = Sequence()
         self.remote_sequence_number = 0
         self.remote_ack_number = 0
 
@@ -258,6 +322,21 @@ class UdpProtocol(BaseProtocol):
     def _receive_packet(self):
         return self.thread_recv_queue.get()
 
+    def _cumulative_ack_received(self, ack_number: Sequence) -> None:
+        """When the peer sends ack=N, all packets <= N in our buffer
+        are acknowledged and safe to evict.
+        """
+        if ack_number <= self.local_ack_number:
+            return
+        self.local_ack_number = ack_number
+        cleared_seqs = [
+            seq
+            for seq in self.retransmission_buffer
+            if seq <= ack_number
+        ]
+        for seq in cleared_seqs:
+            del self.retransmission_buffer[seq]
+
     def _receive_packet_low(self):
         try:
             data, address = self.sock.recvfrom(2048)
@@ -268,6 +347,9 @@ class UdpProtocol(BaseProtocol):
             self.connect()
             return
         packet = Packet.from_bytes(data)
+
+        if packet.flags & UdpProtocol.FLAG_ACK:
+            self._cumulative_ack_received(Sequence(packet.acknowledgement_number))
 
         if packet.flags & UdpProtocol.FLAG_RETRANSMISSION:
             if len(data) > 12:
