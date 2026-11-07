@@ -288,7 +288,7 @@ class UdpProtocol(BaseProtocol):
                         return
                 else:
                     self.thread_recv_queue.put(None)
-                    RuntimeError("Unexpected result from select()")
+                    raise RuntimeError("Unexpected result from select()")
 
     def get_link_quality(self):
         if self.packet_sucess == 0:
