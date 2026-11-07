@@ -10,36 +10,13 @@ import sys
 import gi
 
 from gtk_switcher.atemwindow import AtemWindow
+from pyatem.logging import setup_logging
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio
 
 gi.require_version('Handy', '1')
 from gi.repository import Handy
-
-
-class AtemLogFormatter(logging.Formatter):
-    grey = "\x1b[38;20m"
-    white = "\x1b[97;20m"
-    blue = "\x1b[36;20m"
-    yellow = "\x1b[33;20m"
-    red = "\x1b[31;20m"
-    bold_red = "\x1b[31;1m"
-    reset = "\x1b[0m"
-    format = '[%(levelname)-8s %(threadName)-12s] %(name)-14s - %(message)s'
-
-    FORMATS = {
-        logging.DEBUG: blue + format + reset,
-        logging.INFO: white + format + reset,
-        logging.WARNING: yellow + format + reset,
-        logging.ERROR: red + format + reset,
-        logging.CRITICAL: bold_red + format + reset
-    }
-
-    def format(self, record):
-        log_fmt = self.FORMATS.get(record.levelno)
-        formatter = logging.Formatter(log_fmt)
-        return formatter.format(record)
 
 
 class AtemApplication(Gtk.Application):
@@ -71,9 +48,7 @@ def main(version):
 
     if args.debug:
         args.level = logging.DEBUG
-    ch = logging.StreamHandler()
-    ch.setFormatter(AtemLogFormatter())
-    logging.basicConfig(level=args.level, handlers=[ch])
+    setup_logging(args.level)
 
     log = logging.getLogger('Launcher')
     log.info(f'OpenSwitcher version {version}')
