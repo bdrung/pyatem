@@ -1956,6 +1956,140 @@ class KeyPropertiesDveCommand(Command):
         return self._make_command('CKDV', data)
 
 
+def _calc_coord(maximum: int, size_in_permille: int, border: int) -> int:
+    return maximum - round(maximum * (size_in_permille / 1000)) - border
+
+
+class DvePresetPositionCommand(KeyPropertiesDveCommand):
+    """Set the DVE keyer to a named screen position preset.
+
+    Calculates the target X/Y coordinates based on screen bounds, given size,
+    border margin, and directional offsets, delegating to `KeyPropertiesDveCommand`.
+
+    These presets correspond to the Picture in Picture (PiP) position buttons
+    found on ATEM Mini switchers (e.g., top-left, top-right, bottom-left,
+    bottom-right), alongside standard directional and center presets.
+
+    Positions supported:
+        - "top left" / "tl" / "lt" (ATEM Mini PiP Top-Left)
+        - "top" / "t"
+        - "top right" / "tr" / "rt" (ATEM Mini PiP Top-Right)
+        - "right" / "r"
+        - "bottom right" / "br" / "rb" (ATEM Mini PiP Bottom-Right)
+        - "bottom" / "b"
+        - "bottom left" / "bl" / "lb" (ATEM Mini PiP Bottom-Left)
+        - "left" / "l"
+        - "middle" / "m"
+    """
+
+    MAX_X = 16000
+    MAX_Y = 9000
+    POSITIONS = {
+        # name: (x_factor, y_factor)
+        "top left": (-1, 1),
+        "tl": (-1, 1),
+        "lt": (-1, 1),
+        "top": (0, 1),
+        "t": (0, 1),
+        "top right": (1, 1),
+        "tr": (1, 1),
+        "rt": (1, 1),
+        "right": (1, 0),
+        "r": (1, 0),
+        "bottom right": (1, -1),
+        "br": (1, -1),
+        "rb": (1, -1),
+        "bottom": (0, -1),
+        "b": (0, -1),
+        "bottom left": (-1, -1),
+        "bl": (-1, -1),
+        "lb": (-1, -1),
+        "left": (-1, 0),
+        "l": (-1, 0),
+        "middle": (0, 0),
+        "m": (0, 0),
+    }
+
+    def __init__(
+        self,
+        index: int,
+        keyer: int,
+        position: str,
+        size: int = 200,
+        border: int = 300,
+        rate: int | None = None,
+    ) -> None:
+        """
+        :param index: 0-indexed M/E number of the upstream keyer
+        :param keyer: 0-indexed keyer number
+        :param position: Name or shorthand matching ATEM Mini Picture in Picture (PiP)
+            presets (e.g. 'top right'/'tr', 'top left'/'tl', 'bottom right'/'br',
+            'bottom left'/'bl', 'middle'/'m')
+        :param size: Keyer size in permille (default: 200)
+        :param border: Margin from screen edges (default: 300)
+        :param rate: Effect duration in frames
+        """
+        self.position = position
+        self.size = size
+        self.border = border
+
+        pos_key = position.lower().strip()
+        if pos_key not in self.POSITIONS:
+            valid_positions = ", ".join(sorted(set(self.POSITIONS.keys())))
+            raise ValueError(
+                f"Unknown position {position!r}. Valid positions: {valid_positions}"
+            )
+
+        factor_x, factor_y = self.POSITIONS[pos_key]
+        pos_x = factor_x * _calc_coord(self.MAX_X, size, border)
+        pos_y = factor_y * _calc_coord(self.MAX_Y, size, border)
+
+        super().__init__(
+            index=index,
+            keyer=keyer,
+            size_x=size,
+            size_y=size,
+            pos_x=pos_x,
+            pos_y=pos_y,
+            rotation=0,
+            border_enabled=True,
+            shadow_enabled=False,
+            outer_width=0,
+            inner_width=20,  # percent related to source image
+            outer_softness=0,
+            inner_softness=0,
+            bevel_softness=0,
+            bevel_position=0,
+            border_opacity=100,
+            border_hue=0,
+            border_saturation=0,
+            border_luma=0,
+            angle=360,
+            altitude=25,
+            mask_enabled=False,
+            mask_top=0,
+            mask_bottom=0,
+            mask_left=0,
+            mask_right=0,
+            rate=rate,
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"{type(self).__name__}("
+            f"index={self.index!r}, "
+            f"keyer={self.keyer!r}, "
+            f"position={self.position!r}, "
+            f"size={self.size!r}, "
+            f"border={self.border!r}, "
+            f"rate={self.rate!r})"
+        )
+
+
+# Short-hand alias (to be used in the CLI)
+PipPositionCommand = DvePresetPositionCommand
+
+
 class KeyPropertiesAdvancedChromaColorpickerCommand(Command):
     """
     Implementation of the `CACC` command.  This sets the state of the
