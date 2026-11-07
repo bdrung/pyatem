@@ -347,6 +347,7 @@ class UdpProtocol(BaseProtocol):
             self.connect()
             return
         packet = Packet.from_bytes(data)
+        self.log.debug("< %s", packet)
 
         if packet.flags & UdpProtocol.FLAG_ACK:
             self._cumulative_ack_received(Sequence(packet.acknowledgement_number))
