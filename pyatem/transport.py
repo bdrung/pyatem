@@ -195,6 +195,10 @@ class BaseProtocol:
     def _send_packet(self, packet):
         raise NotImplementedError()
 
+    def is_drained(self) -> bool:
+        """Check whether all outbound data has been transmitted and acknowledged."""
+        return True
+
     def queue_packet(self, packet):
         self.send_queue.append(packet)
 
@@ -263,6 +267,10 @@ class UdpProtocol(BaseProtocol):
         self.log = logging.getLogger('UdpTransport')
         self.packet_sucess = 0
         self.packet_errors = 0
+
+    def is_drained(self) -> bool:
+        """Check whether all outbound data has been transmitted and acknowledged."""
+        return self.thread_queue.empty() and not self.retransmission_buffer
 
     def _udp_thread(self):
         while True:

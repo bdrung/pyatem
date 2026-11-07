@@ -214,6 +214,10 @@ class AtemProtocol:
     def connect(self):
         self.transport.connect()
 
+    def is_drained(self) -> bool:
+        """Check whether all outbound data has been transmitted and acknowledged."""
+        return self.transport.is_drained()
+
     def loop(self):
         self.log.debug('Waiting for data packet...')
         packet = self.transport.receive_packet()
