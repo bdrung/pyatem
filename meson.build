@@ -24,4 +24,11 @@ if get_option('with_proxy')
     subdir('openswitcher_proxy')
 endif
 
+install_data(
+    'switcher_cli.py',
+    install_dir: get_option('bindir'),
+    install_mode: 'rwxr-xr-x',
+    rename: 'switcher-cli',
+)
+
 meson.add_install_script('build-aux/meson/postinstall.py')
