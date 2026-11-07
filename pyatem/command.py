@@ -13,6 +13,14 @@ class Command:
         header = struct.pack('>H 2x 4s', len(data) + 8, name.encode())
         return header + data
 
+    def __repr__(self) -> str:
+        attrs = ", ".join(
+            f"{k}={v!r}"
+            for k, v in self.__dict__.items()
+            if not k.startswith("_")
+        )
+        return f"{type(self).__name__}({attrs})"
+
 
 class CutCommand(Command):
     """
