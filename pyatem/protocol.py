@@ -212,7 +212,6 @@ class AtemProtocol:
         return UsbProtocol.device_exists()
 
     def connect(self):
-        self.log.debug('Starting connection')
         self.transport.connect()
 
     def loop(self):

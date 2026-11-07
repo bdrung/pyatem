@@ -414,6 +414,7 @@ class UdpProtocol(BaseProtocol):
         self._send_packet(response)
 
     def connect(self):
+        self.log.info('Starting UDP connection to %s:%s', self.ip, self.port)
         if self.state != UdpProtocol.STATE_CLOSED:
             raise RuntimeError("Trying to open an connection that's already open")
 
@@ -595,6 +596,7 @@ class UsbProtocol(BaseProtocol):
         return header[0], payload[4:]
 
     def connect(self):
+        self.log.info('Starting USB connection')
         try:
             # Try the initial control transfer for firmware 8.5 and older
             self.handle.ctrl_transfer(0x21, 0, 0x0000, 2, [])
@@ -776,6 +778,7 @@ class TcpProtocol(BaseProtocol):
         return result
 
     def connect(self):
+        self.log.info('Starting TCP connection to %s:%s', self.host, self.port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((self.host, self.port))
 
