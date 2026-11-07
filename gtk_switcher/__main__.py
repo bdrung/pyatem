@@ -61,22 +61,19 @@ def main(version):
     parser = argparse.ArgumentParser(description="ATEM Control panel")
     parser.add_argument('ip', help='ip-address of the switcher to connect to', nargs='?')
     parser.add_argument('--persist', action='store_true', help='save the new ip address')
-    parser.add_argument('--verbose', action='store_true', help='Show more log messages')
+    parser.add_argument('--verbose', dest='level', action='store_const',
+                        const=logging.INFO, default=None, help='Show more log messages')
     parser.add_argument('--debug', action='store_true', help='Display a lot of debugging info')
     parser.add_argument('--dump', help='dump data for specific packets', nargs='*')
     parser.add_argument('--view', choices=['switcher', 'media', 'audio', 'camera'], default='switcher',
                         help='default view to open when launching')
     args = parser.parse_args()
 
+    if args.debug:
+        args.level = logging.DEBUG
     ch = logging.StreamHandler()
     ch.setFormatter(AtemLogFormatter())
-
-    if args.verbose:
-        logging.basicConfig(level=logging.INFO, handlers=[ch])
-    elif args.debug:
-        logging.basicConfig(level=logging.DEBUG, handlers=[ch])
-    else:
-        logging.basicConfig(handlers=[ch])
+    logging.basicConfig(level=args.level, handlers=[ch])
 
     log = logging.getLogger('Launcher')
     log.info(f'OpenSwitcher version {version}')
